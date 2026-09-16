@@ -1,0 +1,35 @@
+# parser backends (notebook 02 candidates)
+pymupdf==1.27.2.3
+pymupdf4llm==1.27.2.3
+docling==2.93.0
+unstructured[pdf]==0.17.2
+
+# core deps
+pyyaml==6.0.3
+rapidfuzz==3.14.5
+sentence-transformers==4.1.0
+numpy==2.4.4
+requests==2.32.3
+pandas==3.0.3
+ollama==0.6.2
+rich==14.0.0
+
+# RAG layer (05): sparse BM25 + dense fine-tune + vector index
+rank_bm25==0.2.2
+peft==0.20.0
+faiss-cpu==1.15.0
+datasets==3.5.0
+fsspec==2024.12.0
+
+# P0: Neo4j GraphRAG (official neo4j-graphrag package; Ollama via its OpenAI-compat /v1 endpoint)
+neo4j==6.2.0
+neo4j-graphrag[openai]==1.19.0
+python-dotenv==1.1.0
+
+# Jupyter (kernel: "Energy Audit (Python 3.11)") + notebook tooling
+ipykernel==6.29.5
+nbformat==5.10.4
+nbclient==0.10.4
+
+# Phase 6: test suite (run with: python -m pytest tests/)
+pytest==9.1.1
