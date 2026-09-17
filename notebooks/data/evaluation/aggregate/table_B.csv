@@ -1,0 +1,6 @@
+system,em,f1,semantic_sim,cites_target,judge_relevance,judge_faithfulness,judge_groundedness,judge_completeness,correct,faithful,complete,evidence_supported,overall_score,confidence,graph_reasoning_correct,unsupported_claim_rate,escalation_rate
+hybrid,0.000,0.262,0.617,1.00,3.85,3.63,3.55,2.75,0.583,0.617,0.350,0.667,3.05,0.949,0.643,0.268,0.383
+hybrid_rerank,0.000,0.263,0.615,1.00,3.28,3.45,3.47,2.37,0.550,0.617,0.283,0.650,2.73,0.929,0.357,0.283,0.400
+hybrid_graph_rerank,0.000,0.288,0.638,1.00,3.68,3.33,3.58,2.68,0.483,0.533,0.350,0.550,2.82,0.942,0.286,0.277,0.467
+hybrid_gr_1hop,0.000,0.285,0.634,1.00,3.45,3.38,3.55,2.78,0.483,0.550,0.400,0.617,2.87,0.939,0.381,0.226,0.417
+hybrid_gr_relations,0.000,0.288,0.635,1.00,3.48,3.48,3.60,2.83,0.533,0.567,0.400,0.650,2.92,0.943,0.263,0.236,0.400

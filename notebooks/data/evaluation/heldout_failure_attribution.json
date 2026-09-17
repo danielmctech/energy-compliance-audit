@@ -1,0 +1,84 @@
+{
+  "b0": {
+    "counts": {
+      "D_correct": 56,
+      "A_admission": 99,
+      "C_answer": 5
+    },
+    "n": 160,
+    "rates": {
+      "D_correct": 0.35,
+      "A_admission": 0.61875,
+      "C_answer": 0.03125
+    }
+  },
+  "g1": {
+    "counts": {
+      "D_correct": 74,
+      "A_admission": 66,
+      "G1_graph_expansion_failure": 66,
+      "B_ranking": 7,
+      "G2_graph_prioritization_failure": 7,
+      "G4_successful_graph_recovery": 21,
+      "C_answer": 13,
+      "G3_graph_context_failure": 13
+    },
+    "n": 160,
+    "rates": {
+      "D_correct": 0.4625,
+      "A_admission": 0.4125,
+      "G1_graph_expansion_failure": 0.4125,
+      "B_ranking": 0.04375,
+      "G2_graph_prioritization_failure": 0.04375,
+      "G4_successful_graph_recovery": 0.13125,
+      "C_answer": 0.08125,
+      "G3_graph_context_failure": 0.08125
+    }
+  },
+  "g2": {
+    "counts": {
+      "D_correct": 79,
+      "A_admission": 68,
+      "G1_graph_expansion_failure": 68,
+      "G4_successful_graph_recovery": 23,
+      "B_ranking": 9,
+      "G2_graph_prioritization_failure": 9,
+      "C_answer": 4,
+      "G3_graph_context_failure": 4
+    },
+    "n": 160,
+    "rates": {
+      "D_correct": 0.49375,
+      "A_admission": 0.425,
+      "G1_graph_expansion_failure": 0.425,
+      "G4_successful_graph_recovery": 0.14375,
+      "B_ranking": 0.05625,
+      "G2_graph_prioritization_failure": 0.05625,
+      "C_answer": 0.025,
+      "G3_graph_context_failure": 0.025
+    }
+  },
+  "g2_nogc": {
+    "counts": {
+      "D_correct": 74,
+      "A_admission": 68,
+      "G1_graph_expansion_failure": 68,
+      "G4_successful_graph_recovery": 21,
+      "C_answer": 8,
+      "G3_graph_context_failure": 8,
+      "B_ranking": 10,
+      "G2_graph_prioritization_failure": 10
+    },
+    "n": 160,
+    "rates": {
+      "D_correct": 0.4625,
+      "A_admission": 0.425,
+      "G1_graph_expansion_failure": 0.425,
+      "G4_successful_graph_recovery": 0.13125,
+      "C_answer": 0.05,
+      "G3_graph_context_failure": 0.05,
+      "B_ranking": 0.0625,
+      "G2_graph_prioritization_failure": 0.0625
+    }
+  }
+}

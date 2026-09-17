@@ -1,0 +1,69 @@
+{
+  "spec": "08 §3 (diagnostic set = tuning set), §20 (leakage check)",
+  "n_heldout": 174,
+  "diagnostic_set": {
+    "source": "gcg_2hop_two_levers_report.md §A/§B — primary 8 + controls 6, the 14-query target set of the completed GCG series (tuning/diagnostic set per spec 08 §3)",
+    "query_ids": [
+      "q005",
+      "q014",
+      "q027",
+      "q031",
+      "q033",
+      "q034",
+      "q050",
+      "q051",
+      "q011",
+      "q030",
+      "q044",
+      "q048",
+      "q055",
+      "q058"
+    ],
+    "missing_from_frozen_60": []
+  },
+  "checks": {
+    "no_heldout_query_is_diagnostic_query": {
+      "definition": "exact question-text membership in the 14 diagnostic questions",
+      "overlap": [],
+      "pass": true
+    },
+    "no_heldout_target_in_diagnostic": {
+      "definition": "target lineage-id overlap with the 14",
+      "overlap": [],
+      "pass": true
+    },
+    "no_heldout_gold_chunk_in_diagnostic": {
+      "definition": "gold-chunk id overlap with the 14",
+      "overlap": [],
+      "pass": true
+    },
+    "no_heldout_query_in_frozen_60": {
+      "definition": "strict: the 14 is a subset of the frozen 60-set, so verify zero question-text, target, and gold-chunk overlap with the full 60",
+      "question_overlap": [],
+      "target_overlap": [],
+      "chunk_overlap": [],
+      "pass": true
+    },
+    "potential_paraphrase_by_fact_key": {
+      "definition": "the question template is a pure function of (term, doc, target-article, gold-edge); items sharing a fact-key COULD render the same text, but may differ in article-level src/dst or in which non-article chunk is targeted.  These are flagged for review, not auto-rejected.  Human review: check whether the overlapping fact-key corresponds to a semantically identical question in context.",
+      "overlap_with_60": [
+        "('edge', 'acer_remit_guidance:document', 'AMENDS', 'remit_ii_2024_1106:document')",
+        "('edge', 'dora_2022_2554:article:2', 'APPLIES_TO', 'corpus:entity:entities')",
+        "('edge', 'mica_2023_1114:article:149', 'APPLIES_TO', 'corpus:entity:entities')",
+        "('edge', 'mica_2023_1114:article:2', 'APPLIES_TO', 'corpus:entity:undertakings')",
+        "(None, 'acer_remit_guidance', None)"
+      ],
+      "overlap_with_14": [],
+      "informational": true
+    },
+    "not_used_for_parameter_selection": {
+      "definition": "held-out set was constructed via build_benchmark_heldout() AFTER the pool budget (A0-30 / split_12_9+21) and graph-context (Lever 2) choices were frozen (spec §1); the builder rejects any item whose target or text appears in the frozen 60-set, so the set was structurally incapable of informing those choices",
+      "pass": true
+    },
+    "labels_not_exposed_to_retrieval_pipeline": {
+      "definition": "ground truth is read only by metric code (target_lineage_id, gold_chunks, gold_edges, required_evidence); the retrieval pipeline consumes item.question only.  Benchmark construction is deterministic (build_benchmark_heldout, seed 13), produced BEFORE the three systems run, and is not part of the retrieval pipeline.",
+      "pass": true
+    }
+  },
+  "all_checks_pass": true
+}

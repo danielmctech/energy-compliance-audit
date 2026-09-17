@@ -54,6 +54,25 @@ outputs/
 #      (plus individual scripts/make_gcg_*.py for each ablation)
 #   6. Jupyter kernel: run notebooks 01-08 in order
 notebooks/data/
+# Definitive evaluation evidence — committed for thesis verification
+!notebooks/data/evaluation/aggregate/
+!notebooks/data/evaluation/aggregate/*.csv
+!notebooks/data/evaluation/aggregate/tables.md
+!notebooks/data/evaluation/heldout_statistics.json
+!notebooks/data/evaluation/heldout_failure_attribution.json
+!notebooks/data/evaluation/benchmark_audit_summary.json
+!notebooks/data/evaluation/heldout_benchmark_validation.json
+!notebooks/data/evaluation/heldout_leakage_audit.json
+!notebooks/data/evaluation/per_query/benchmark.jsonl
+!notebooks/data/evaluation/diagnostic/
+!notebooks/data/evaluation/diagnostic/heldout_generalization_report.md
+!notebooks/data/evaluation/diagnostic/admission_failure_mechanism.json
+!notebooks/data/evaluation/diagnostic/admission_failure_mechanism_report.md
+!notebooks/data/graph/graph_summary.csv
+!notebooks/data/graph/nodes.jsonl
+!notebooks/data/ast/ast_summary.csv
+!notebooks/data/figures/
+!notebooks/data/figures/*.png
 
 # Transient / backup / scratch files (any directory)
 *.bak*
