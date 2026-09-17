@@ -29,11 +29,13 @@ All tunables live in `src/evaluation/config.py` (`EvalConfig`,
 
 - **1. Benchmark** - a **60-query, single-target** benchmark
   (`per_query/benchmark.jsonl`); 58 article-type / 2 term-type.
-- **2. Retrieval run** - 8 systems × 60 queries: `dense`, `sparse`,
-  `hybrid`, `graph`, `neo4j`, `hybrid_graph`, `dense_ft_s1`, `dense_ft_s2`.
-- **3. Generation** - 5 of the 8 arms (`dense`, `sparse`, `hybrid`,
+- **2. Retrieval run** - 13 systems × 60 queries: `dense`, `sparse`,
+  `hybrid`, `graph`, `neo4j`, `hybrid_graph`, `hybrid_rerank`,
+  `hybrid_graph_rerank`, `hybrid_gr_1hop`, `hybrid_gr_relations`,
+  `hybrid_gr_expand`, `dense_ft_s1`, `dense_ft_s2`.
+- **3. Generation** - 5 of the 13 arms (`dense`, `sparse`, `hybrid`,
   `hybrid_graph`, `neo4j`) generate answers via Ollama `qwen3.8:27b`
-  (temperature 0.0, cached); the 3 graph/fine-tune arms are retrieval-only.
+  (temperature 0.0, cached); the remaining arms are retrieval-only.
 - **4. Answer metrics** - `token_f1`, `exact_match` (degenerate:
   `reference_answer` is the *target chunk text*, so EM = 0.000 by
   construction), `semantic_sim` (base encoder), `cites_target`, and an

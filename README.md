@@ -20,10 +20,11 @@ and a 160-query held-out generalization set.
          │               (LLM structure extraction: qwen3.8:27b)
   03a structure maps ─► articles, definitions, obligations
          │
-  03b AST chunks ─────► ~3,640 chunks with lineage IDs (doc:article:N / doc:sentence:span)
+  03b AST chunks ─────► ~3,652 chunks with lineage IDs (doc:article:N / doc:sentence:span)
          │
   04 graph ────────────► 2,076 nodes / 5,178 edges
-         │                (CROSS_REFERENCES, AMENDS, DEFINED_IN, APPLIES_TO)
+          │                (CROSS_REFERENCES, AMENDS, DEFINED_IN, APPLIES_TO,
+          │                 PART_OF, IMPLEMENTS, SUPERSEDES)
   05 retrieval layer ──► retrieve(query, k, mode)
          │                mode ∈ sparse | dense | graph | hybrid | hybrid_graph | …
   06 GraphRAG API ───── Neo4j-backed GraphRAG ingestion + query API
@@ -31,8 +32,8 @@ and a 160-query held-out generalization set.
   07 graph exploration ─► scenario queries (CROSS_REFERENCES / AMENDS paths)
          │
   08 evaluation ────────► 60-query benchmark + 160-query held-out generalization
-                          12 retrieval conditions × 10 metrics (Recall, Precision,
-                          MRR, nDCG, Hit) + LLM-as-judge answer scoring
+                           13 retrieval conditions × 10 metrics (Recall, Precision,
+                           MRR, nDCG, Hit) + LLM-as-judge answer scoring
 ```
 
 The retrieval layer (`src/retrieval/`) combines three base methods:
@@ -43,11 +44,14 @@ The retrieval layer (`src/retrieval/`) combines three base methods:
 | `dense` | `all-MiniLM-L6-v2` embeddings + FAISS cosine (L2-normalised vectors, `IndexFlatIP`) |
 | `graph` | 1–2 hop expansion of seed articles over `CROSS_REFERENCES` / `AMENDS` edges |
 
-and a fusion layer (`hybrid`, `hybrid_graph`, `hybrid_gr_1hop`, `hybrid_gr_expand`,
-`hybrid_gr_relations`, `hybrid_graph_rerank`, plus two-hop GCG variants
-`gcg_1hop_50`, `gcg_2hop_50`, `gcg_2hop_50_untruncated`,
+and a fusion/reranking layer: `hybrid`, `hybrid_graph`, `hybrid_gr_1hop`,
+`hybrid_gr_expand`, `hybrid_gr_relations`, `hybrid_rerank`,
+`hybrid_graph_rerank` (LLM reranker). The `gcg_*` variants
+(`gcg_1hop_50`, `gcg_2hop_50`, `gcg_2hop_50_untruncated`,
 `gcg_2hop_split119_50`, `gcg_2hop_split119_60`, `gcg_2hop_split129_21`,
-`gcg_2hop_split129_21_gc` — see `src/retrieval/two_hop.py`).
+`gcg_2hop_split129_21_gc`) are **experiment system tags** in driver scripts,
+not `retrieve(mode=)` values — see `scripts/run_gcg_*.py` and
+`src/retrieval/two_hop.py`.
 
 Every `RetrievedChunk` carries `lineage_id`, `source_methods`, graph-edge provenance,
 and (in fused modes) per-method RRF contribution, so any result can be traced
@@ -83,10 +87,10 @@ lineage IDs.
 built to test out-of-distribution performance. No overlap with the benchmark.
 
 **Retrieval metrics** (table A): Recall@K, Precision@K, MRR, nDCG@K, Hit@K
-for K ∈ {3, 5, 10, 30} across all 12 retrieval conditions.
+for K ∈ {3, 5, 10, 30} across all 13 retrieval conditions.
 
 **Answer-quality metrics** (table B): a two-model LLM-as-judge pipeline
-(primary: `gpt-oss`; escalator: `nemotron-3-nano` when confidence < 0.85)
+(primary: `gpt-oss:latest`; escalator: `nemotron-3-nano:30b` when confidence < 0.85)
 scores free-text answers on 4 axes + 5 boolean checks.
 
 **Significance tests**: paired Wilcoxon signed-rank (bootstrap 95 % CI)
@@ -156,8 +160,8 @@ document is only extracted once). The evaluation harness (notebook 08) uses
 
 ```bash
 ollama pull qwen3.8:27b          # reasoner + generator
-ollama pull gpt-oss              # judge (primary)
-ollama pull nemotron-3-nano      # judge (escalator)
+ollama pull gpt-oss:latest       # judge (primary)
+ollama pull nemotron-3-nano:30b  # judge (escalator)
 ollama ps                        # verify models load on GPU
 ```
 
@@ -219,10 +223,14 @@ from retrieval import retrieve
 results = retrieve("Who must publish inside information under REMIT?", k=10, mode="hybrid_graph")
 ```
 
-Fusion modes: `hybrid` (RRF sparse+dense), `hybrid_graph` (RRF + graph neighbours),
-`hybrid_gr_1hop` / `hybrid_gr_expand` / `hybrid_gr_relations` (graph-rerank
-variants), plus two-hop GCG variants with configurable distance-1 / distance-2
-slot allocation (`split_N_M` in `src/retrieval/two_hop.py`).
+Fusion modes (`retrieve(mode=…)`): `hybrid` (RRF sparse+dense),
+`hybrid_graph` (RRF + graph neighbours), `hybrid_gr_1hop` /
+`hybrid_gr_expand` / `hybrid_gr_relations` (graph-rerank variants),
+`hybrid_rerank` / `hybrid_graph_rerank` (LLM reranker).
+The `gcg_*` experiment system tags (see `scripts/run_gcg_*.py`) apply
+two-hop GCG expansion with configurable distance-1 / distance-2 slot
+allocation (`split_N_M` in `src/retrieval/two_hop.py`) on top of these
+modes.
 
 ---
 

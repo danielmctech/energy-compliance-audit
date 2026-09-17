@@ -37,7 +37,7 @@ so any edge is *inspectable* and *falsifiable* against the source text.
 
 - **In:** `03b` ASTs + chunks (lineage IDs), `03a` structure maps.
 - **Out:** `notebooks/data/graph/nodes.jsonl`, `edges.jsonl`,
-  `graph_summary.csv` (2,049 nodes / 4,139 edges).
+  `graph_summary.csv` (2,076 nodes / 5,178 edges).
 
 ## Where the logic lives
 

@@ -8,8 +8,8 @@ Cypher for the thesis and for a reader's own Neo4j Browser.
 
 ## Purpose
 
-Useful, schema-true **Cypher over the live Neo4j graph** (2,049 nodes /
-4,139 edges - read-only, no new indexes), plus a live **question → documents**
+Useful, schema-true **Cypher over the live Neo4j graph** (2,076 nodes /
+5,178 edges - read-only, no new indexes), plus a live **question → documents**
 trace through `GraphRAG.query()` that yields a paste-ready Neo4j Browser
 query. In short: it *demonstrates* the graph is a real, navigable
 knowledge base, not an abstract claim.

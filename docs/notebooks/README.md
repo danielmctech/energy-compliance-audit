@@ -55,7 +55,7 @@ to the lineage* - that is the contract.
 | 02 | `ground_truth/*.json`, `evaluations/parser_evaluation_*.csv`, `best_parser.json` |
 | 03a | `structure_maps/*_structure.json`, `best_structure_map.json` |
 | 03b | `ast/*_ast.json`, `chunks_*.json`, `ast_summary.csv` |
-| 04 | `graph/nodes.jsonl`, `edges.jsonl`, `graph_summary.csv` (2,049 nodes / 4,139 edges) |
+| 04 | `graph/nodes.jsonl`, `edges.jsonl`, `graph_summary.csv` (2,076 nodes / 5,178 edges) |
 | 05 | `retrieval/` indexes + `retrieval_eval_*.jsonl` (per-mode) |
 | 06 | `graphrag/graphrag_summary.csv`, `graphrag_logs.jsonl` |
 | 07 | live Cypher (nothing written to disk by design) |
