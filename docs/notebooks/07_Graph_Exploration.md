@@ -65,5 +65,5 @@ measured is *not explained* by `07`. The graph is rich and navigable -
 that is *not* the same as *good for retrieval*. A reader who looks at the
 hubs in B and the neighborhoods in C might conclude "the graph is clearly
 useful," and be measuring the *wrong thing*. `07` is the **positive** side
-of the graph evidence; `08` (via `06` §6.9) carries the **negative**
+of the graph evidence; `08` carries the **negative**
 side. Read them as a pair.

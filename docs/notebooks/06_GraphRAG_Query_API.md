@@ -42,7 +42,7 @@ schema.py` (Cypher), `src/neo4j_config.py` (LLM + connection).
 This is where the *compliance audit* use case is *demonstrated*: query →
 answer with **per-line provenance**, which is what makes a machine answer
 citeable in a finding. It is also where the **negative result is confirmed
-end-to-end**: `06` §6.9 and `08` find `neo4j` is the *weakest* retrieval
+end-to-end**: `08` finds `neo4j` is the *weakest* retrieval
 system (Recall@10 0.233, 41 retrieval failures). The GraphRAG arm is
 therefore *measured, not assumed* - and the weakness is named and attributed.
 
@@ -51,6 +51,6 @@ therefore *measured, not assumed* - and the weakness is named and attributed.
 The **weak retrieval** is a real result, not a bug to hide - the question
 "is the graph a better retrieval surface than the vector store for
 regulatory text?" is answered *no, on this corpus, by a large margin*.
-`06` §6.9 flags that the failure is **not isolated to the storage layer**
+The failure is **not isolated to the storage layer**
 (so it is a design question, not a bug), and `08` Tier 3 proposes the
 repair (hop-aware context, seed expansion).

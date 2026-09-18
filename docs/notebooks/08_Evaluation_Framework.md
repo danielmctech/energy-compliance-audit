@@ -55,8 +55,7 @@ All tunables live in `src/evaluation/config.py` (`EvalConfig`,
 - **8. Error analysis** - per `(system, query)` labels: `CORRECT`,
   `PARTIAL_RETRIEVAL`, `RETRIEVAL_FAILURE` (and a `GENERATION_FAILURE`
   class that, for answer arms, is *equivalent to*
-  `RETRIEVAL_FAILURE` because `cites_target = 1.00` for every answer row -
-  see `04` §4.8).
+  `RETRIEVAL_FAILURE` because `cites_target = 1.00` for every answer row).
 - **9. Figures** - `fig1–fig6.png` (retrieval, recall curve, ablation,
   fine-tuning, category, overlap).
 - **10. Reproducibility** - a `reproducibility.json` + `.md` report

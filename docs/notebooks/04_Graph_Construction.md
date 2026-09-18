@@ -47,7 +47,7 @@ persistence side is exercised by `06` (`src/graphrag_n4j/ingestion.py`).
 ## Why it matters to the thesis
 
 This is where the "GraphRAG" in "Hybrid Sparse-Dense-**Graph**" earns its
-name. It also *is the measured negative result*: `08` (`06` §6.5) finds the
+name. It also *is the measured negative result*: `08` finds the
 graph, fused into the hybrid top-k, does **not** add recall on this corpus -
 which is a *useful, reproducible* finding, not an absence of one. The
 evidence-span design is what makes that finding defensible: you can open any
@@ -57,6 +57,6 @@ edge and see the exact sentence that motivated it.
 
 The graph is built from **regex cross-reference extraction**, so its quality
 is bounded by the same boundary cases as `03a` (non-standard numbering,
-amended articles, consolidated provisions). `06` §6.13 lists the absence of a
-*graph-quality gold* as a known gap - the graph's own correctness is not
+amended articles, consolidated provisions). The absence of a
+*graph-quality gold* is a known gap — the graph's own correctness is not
 independently validated against a human-annotated reference.
