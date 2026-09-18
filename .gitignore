@@ -74,6 +74,13 @@ notebooks/data/
 !notebooks/data/figures/
 !notebooks/data/figures/*.png
 
+# Raw EU regulation PDFs (25 documents, 29 MB) — committed as project input
+!notebooks/data/raw/eu/en/
+!notebooks/data/raw/eu/en/regulations/*.pdf
+!notebooks/data/raw/eu/en/directives/*.pdf
+!notebooks/data/raw/eu/en/network_codes/*.pdf
+!notebooks/data/raw/eu/en/guidance/*.pdf
+
 # Transient / backup / scratch files (any directory)
 *.bak*
 *.stale_*
