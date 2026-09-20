@@ -93,10 +93,6 @@ def build_report(items: Optional[list] = None,
                 if _ver("neo4j-graphrag") else "bge-m3 (via Ollama)",
             "semantic_similarity_embedding": "BAAI/bge-m3",
             "dense_base": "all-MiniLM-L6-v2",
-            "dense_finetuned": [
-                "notebooks/data/retrieval/finetuned_stage1/adapter",
-                "notebooks/data/retrieval/finetuned_stage2/adapter",
-            ],
             "scenario_protocol": {
                 "drafters": [cfg.scenario_drafter_a, cfg.scenario_drafter_b],
                 "adjudicator": cfg.scenario_adjudicator,
@@ -199,10 +195,7 @@ def _to_markdown(report: Dict, p: Path):
         lines.append(f"| {k} | {v} |")
     b = report.get("benchmark") or {}
     if b:
-        lk = (b.get("leakage") or {})
         lines += ["\n## Benchmark",
                   f"- n={b.get('n')} | categories: {b.get('category_counts')}",
-                  f"- docs: {b.get('n_docs')}",
-                  f"- leakage: {lk.get('targets_that_are_lora_training_positives', 'n/a')}"
-                  " targets are LoRA training positives (see leakage_checks.json)"]
+                  f"- docs: {b.get('n_docs')}"]
     p.write_text("\n".join(lines) + "\n")

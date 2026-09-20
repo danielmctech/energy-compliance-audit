@@ -7,8 +7,6 @@ omitted from the plot -- never filled with 0 or a placeholder (per "No Fabricate
 Figures:
   fig1_retrieval.png      -- bars: systems x {Recall@5, Recall@10, MRR}
   fig2_recall_curve.png   -- recall vs K per system
-  fig3_ablation.png       -- full vs without-dense/sparse/graph (Recall@10)
-  fig4_fine_tuning.png    -- dense base vs stage1 vs stage2 (Recall curve)
   fig5_category.png       -- per-category Recall@10 by system (if categories)
   fig6_overlap.png        -- Jaccard bar plot + unique-relevant by method
 
@@ -27,8 +25,7 @@ from . import config as E
 from .tables import load_aggregate
 
 _PAL = {"dense": "#1f77b4", "sparse": "#d62728", "hybrid": "#2ca02c",
-        "graph": "#ff7f0e", "neo4j": "#9467bd", "hybrid_graph": "#8c564b",
-        "dense_ft_s1": "#17becf", "dense_ft_s2": "#bcbd22"}
+        "graph": "#ff7f0e", "neo4j": "#9467bd", "hybrid_graph": "#8c564b"}
 
 
 def _color(name: str) -> str:
@@ -93,46 +90,6 @@ def fig_recall_curve(agg: Optional[List[dict]] = None,
     ax.legend(ncol=2, frameon=False)
     ax.grid(True, alpha=0.3)
     return _save(fig, "fig2_recall_curve.png", out_dir)
-
-
-def fig_ablation(agg: Optional[List[dict]] = None, k: int = 10,
-                 out_dir: Path = E.OUT_FIGURES) -> Path:
-    from .tables import table_c
-    agg = agg or load_aggregate()
-    rows = table_c(agg, "recall", k)
-    labels = [r["configuration"] for r in rows]
-    vals = [float(r["value"]) if r["value"] not in (None, "n/a") else 0
-            for r in rows]
-    fig, ax = plt.subplots(figsize=(7, 4))
-    bars = ax.bar(labels, vals,
-                  color=[_color(r["retrieval"]) for r in rows])
-    ax.set_ylabel(f"Recall@{k}")
-    ax.set_title(f"Ablation: recall@{k} vs full system")
-    for b, v in zip(bars, vals):
-        ax.text(b.get_x() + b.get_width() / 2, b.get_height() + 0.01,
-                f"{v:.3f}", ha="center")
-    ax.set_ylim(0, 1.05)
-    return _save(fig, "fig3_ablation.png", out_dir)
-
-
-def fig_fine_tuning(agg: Optional[List[dict]] = None,
-                    out_dir: Path = E.OUT_FIGURES) -> Path:
-    agg = agg or load_aggregate()
-    variants = [v for v in ("dense", "dense_ft_s1", "dense_ft_s2")
-                if any(r["system"] == v for r in agg)]
-    fig, ax = plt.subplots(figsize=(7, 4.5))
-    for v in variants:
-        pts = sorted([(r["k"], r["value"]) for r in agg
-                      if r["system"] == v and r["metric"] == "recall"])
-        if pts:
-            ax.plot([p[0] for p in pts], [p[1] for p in pts],
-                    marker="s", color=_color(v), label=v)
-    ax.set_xlabel("k")
-    ax.set_ylabel("Recall@k (dense)")
-    ax.set_title("Dense encoder: base vs fine-tuned LoRA stages")
-    ax.legend(frameon=False)
-    ax.grid(True, alpha=0.3)
-    return _save(fig, "fig4_fine_tuning.png", out_dir)
 
 
 def fig_overlap(overlap: Optional[Dict] = None,
@@ -207,8 +164,6 @@ def make_all(agg: Optional[List[dict]] = None,
     out = {}
     out["retrieval"] = fig_retrieval(agg, out_dir)
     out["recall_curve"] = fig_recall_curve(agg, out_dir)
-    out["ablation"] = fig_ablation(agg, out_dir=out_dir)
-    out["fine_tuning"] = fig_fine_tuning(agg, out_dir)
     out["overlap"] = fig_overlap(out_dir=out_dir)
     if items is not None and per_query is not None:
         out["category"] = fig_category(per_query, items, out_dir=out_dir)

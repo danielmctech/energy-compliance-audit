@@ -12,11 +12,9 @@ none of them re-implements retrieval from scratch (per the "Repository-First Req
                          context-augmented query) before dense search.
   B4  rag_hybrid_graph   the full hybrid + graph configuration (KG2RAG-like).
 
-Each dense baseline is run with BOTH the base encoder and the fine-tuned
-LoRA encoder (per the "Fine-Tuning Evaluation" requirement).  The audit
-LLM and metric set are identical across all of them -- only the retrieved
-top-k differs, so per-baseline accuracy differences are attributable to
-*retrieval* (per the "Groundedness / Faithfulness" separation).
+The audit LLM and metric set are identical across all of them -- only the
+retrieved top-k differs, so per-baseline accuracy differences are attributable
+to *retrieval* (per the "Groundedness / Faithfulness" separation).
 
 The retrieval is decoupled from the audit: ``baseline_retrievals`` returns
 ``{scenario_id: {baseline_name: [top-k lineages]}}`` so the audit (LLM)
@@ -53,7 +51,7 @@ def baseline_retrievals(scenarios: Sequence[Scenario],
                         ) -> Dict[str, Dict[str, list]]:
     """Return {scenario_id: {baseline: [top-k lids]}}.
 
-    ``encoder`` in {"base", "finetuned_stage1", "finetuned_stage2"}.
+    ``encoder`` must be "base".
     Baselines: rag_dense_fixed, rag_dense_late, rag_contextual,
     rag_hybrid_graph.  Only the requested subset is run.
     """
@@ -61,17 +59,9 @@ def baseline_retrievals(scenarios: Sequence[Scenario],
     baselines = list(baselines) if baselines else [
         "rag_dense_fixed", "rag_dense_late", "rag_contextual",
         "rag_hybrid_graph"]
-    # choose dense system variant by encoder
-    if encoder == "base":
-        dense_sys = "dense"
-    elif encoder.startswith("finetuned_"):
-        stage = encoder.split("_", 1)[1]  # stage1|stage2
-        short = {"stage1": "s1", "stage2": "s2"}.get(stage)
-        if short is None:
-            raise ValueError(encoder)
-        dense_sys = f"dense_ft_{short}"   # EXPERIMENTS key: dense_ft_s1 / s2
-    else:
-        raise ValueError(encoder)
+    if encoder != "base":
+        raise ValueError(f"only 'base' encoder is supported, got {encoder!r}")
+    dense_sys = "dense"
     # B4 is the dedicated ``hybrid_graph`` mode: RRF fuses sparse+dense and a
     # graph-neighbour list, so graph-sourced chunks enter the top-k (distinct
     # from ``hybrid``, whose top-k is fixed and only carries a graph boost).

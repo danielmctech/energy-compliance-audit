@@ -71,23 +71,6 @@
 | hybrid_gr_1hop | 0.000 | 0.285 | 0.634 | 1.00 | 3.45 | 3.38 | 3.55 | 2.78 | 0.483 | 0.550 | 0.400 | 0.617 | 2.87 | 0.939 | 0.381 | 0.226 | 0.417 |
 | hybrid_gr_relations | 0.000 | 0.288 | 0.635 | 1.00 | 3.48 | 3.48 | 3.60 | 2.83 | 0.533 | 0.567 | 0.400 | 0.650 | 2.92 | 0.943 | 0.263 | 0.236 | 0.400 |
 
-## C
-
-| configuration | retrieval | graph | ablation_metric | k | value | delta_vs_full |
-|---|---|---|---|---|---|---|
-| full | hybrid | True | recall | 10 | 0.267 | 0.00 |
-| without_dense | dense | False | recall | 10 | 0.200 | -0.067 |
-| without_sparse | sparse | False | recall | 10 | 0.283 | 0.017 |
-| without_graph | graph | True | recall | 10 | 0.300 | 0.033 |
-
-## D
-
-| variant | k | recall |
-|---|---|---|
-| dense | 10 | 0.200 |
-| dense_ft_s1 | 10 | n/a |
-| dense_ft_s2 | 10 | n/a |
-
 ## COMPARISON
 
 | metric | k | hybrid | dense | sparse | delta_hybrid_vs_dense | delta_hybrid_vs_sparse | rel_vs_dense | rel_vs_sparse |

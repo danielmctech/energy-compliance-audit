@@ -8,7 +8,7 @@ Every system is evaluated over the SAME 60 queries with the SAME relevance
 judgments and the SAME k-set (the "Methodological Neutrality" requirement).  A system
 is just a (mode, dense_model) pair from ``EXPERIMENTS``:
 
-    sparse / dense(base) / dense_ft_s1 / dense_ft_s2 / hybrid /
+    sparse / dense(base) / hybrid /
     graph / neo4j_graph / hybrid_graph
 
 ``hybrid`` and ``hybrid_graph`` are now structurally distinct retrieval modes:
@@ -30,13 +30,6 @@ from . import config as E
 from .benchmark import BenchmarkItem
 from . import metrics
 
-#: dense model variants -> local dir (LoRA adapter) or HF id
-ADAPTER_DIR = {
-    "finetuned_stage1":
-        str(E.DATA / "retrieval" / "finetuned_stage1" / "adapter"),
-    "finetuned_stage2":
-        str(E.DATA / "retrieval" / "finetuned_stage2" / "adapter"),
-}
 BASE_DENSE = "all-MiniLM-L6-v2"
 
 
@@ -46,8 +39,6 @@ def _dense_specs_for(variant: Optional[str]) -> tuple:
         return None, None
     if variant == "base":
         return ["base"], {"base": BASE_DENSE}
-    if variant in ADAPTER_DIR:
-        return [variant], {variant: ADAPTER_DIR[variant]}
     raise ValueError(f"unknown dense variant {variant!r}")
 
 

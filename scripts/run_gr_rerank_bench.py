@@ -42,8 +42,7 @@ SYSTEMS = [
 
 def main() -> None:
     print(f"[bench] ROOT={ROOT}")
-    # Load the already-built benchmark (avoids re-deriving / the missing
-    # pairs_stage1.jsonl; the historical 60-query set is on disk).
+    # Load the already-built benchmark (historical 60-query set on disk).
     bench_path = E.OUT_PER_QUERY / "benchmark.jsonl"
     print(f"[bench] loading benchmark from {bench_path}")
     items = BM.load(bench_path)

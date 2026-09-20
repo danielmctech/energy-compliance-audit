@@ -1,7 +1,7 @@
 """Deterministic tests for benchmark construction + overlap ("Benchmark Interface" / "Retrieval Overlap Analysis").
 
 No LLM.  Validates the gold-set is exactly 60, categories, deterministic
-order, and the leakage probe, plus Jaccard / complementarity edge cases.
+order, plus Jaccard / complementarity edge cases.
 """
 from __future__ import annotations
 
@@ -90,37 +90,6 @@ def test_benchmark_reference_answer_present():
     items = _items()
     assert all(i.reference_answer for i in items)
     assert all(i.reference_basis == "target_chunk_text" for i in items)
-
-
-# ---- leakage probe -----------------------------------------------------------
-def _pairs_path():
-    return Path(__file__).resolve().parent.parent / \
-        "notebooks/data/retrieval/pairs_stage1.jsonl"
-
-
-def test_leakage_probes_shape():
-    items = _items()
-    probes = B.leakage_probes(_pairs_path(), items)
-    assert "positive_targets" in probes
-    assert "queries" in probes
-
-
-def test_leakage_flag_consistency():
-    """Each item's leakage flag must agree with the probe sets."""
-    items = _items()
-    probes = B.leakage_probes(_pairs_path(), items)
-    pos, qs = probes["positive_targets"], probes["queries"]
-    for i in items:
-        assert i.leakage["target_is_training_positive"] == \
-            (i.target_lineage_id in pos)
-        assert i.leakage["question_matches_training_query"] == (i.question in qs)
-
-
-def test_summary_reports_leakage():
-    s = B.summary(_items())
-    assert "leakage" in s
-    assert "targets_that_are_lora_training_positives" in s["leakage"]
-    assert "questions_that_match_training_queries" in s["leakage"]
 
 
 # ---- overlap -----------------------------------------------------------------

@@ -43,9 +43,8 @@ Four baselines are configurations of the SAME retrieval stack:
                             provision's context is prepended to the clause
                             before dense embedding
   B4 rag_hybrid_graph       the full hybrid + graph configuration (KG2RAG-like)
-Each dense configuration is run with BOTH the base encoder and the fine-tuned
-LoRA encoder so the fine-tuning contribution is isolated from the
-architecture contribution (per the "Additional information" section, last paragraph).
+All configurations use the base encoder (base dense index). The retrieval
+contribution is thus isolated from the generation and judgment pipeline.
 """
 from __future__ import annotations
 

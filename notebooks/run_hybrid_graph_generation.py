@@ -80,10 +80,8 @@ for r in tB:
 print("\n[step 4/4] Re-render tables ...")
 agg = TB.load_aggregate()           # retrieval agg from disk (8 systems, unmodified)
 tA = TB.table_a(agg)
-tC = TB.table_c(agg)
-tD = TB.table_d(agg)
 tComp = TB.comparison(agg)
-written = TB.write({"A": tA, "B": tB, "C": tC, "D": tD, "comparison": tComp})
+written = TB.write({"A": tA, "B": tB, "comparison": tComp})
 for name, p in written.items():
     print(f"        wrote {p}")
 
@@ -102,11 +100,9 @@ for sname in ("sparse", "dense", "hybrid", "neo4j"):
     f = E.OUT_GENERATION / f"answers_{sname}.jsonl"
     if f.exists():
         gen_all[sname] = [json.loads(l) for l in f.read_text().splitlines() if l.strip()]
-PAIRS = E.DATA / "retrieval" / "pairs_stage1.jsonl"
 classification = {item.query_id: EA.classify(item, retrieval_all, gen_all, k=5)
                   for item in items}
-leak = EA.leakage_checks(items, PAIRS)
-EA.save(classification, leak)
+EA.save(classification, {})
 from collections import Counter
 labels = Counter(v for d in classification.values() for v in d.values())
 print("\nerror-analysis label distribution:")

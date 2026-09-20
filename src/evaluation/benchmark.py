@@ -192,7 +192,6 @@ class BenchmarkItem:
     reference_basis: str = "target_chunk_text"
     difficulty: str = "medium"
     metadata: dict = field(default_factory=dict)
-    leakage: dict = field(default_factory=dict)
 
     # doc §8 machine-readable gold evidence
     gold_documents: List[str] = field(default_factory=list)
@@ -224,7 +223,6 @@ class BenchmarkItem:
             "term": self.term,
             "article_title": self.article_title,
             "metadata": self.metadata,
-            "leakage": self.leakage,
             # doc §8 / §9 machine-readable gold evidence
             "gold_answer": self.reference_answer,
             "gold_documents": self.gold_documents,
@@ -1042,60 +1040,13 @@ def build_benchmark_heldout(
 
 
 
-def _leakage(probes: dict, item: BenchmarkItem) -> dict:
-    """Per 'Avoid Data Leakage': was this query/target implicated by the LoRA training pairs?"""
-    pos = probes["positive_targets"]
-    qs = probes["queries"]
-    return {
-        "target_is_training_positive": item.target_lineage_id in pos,
-        "question_matches_training_query": item.question in qs,
-    }
-
-
-def leakage_probes(pairs_path: Path, gold: Sequence[Any]) -> dict:
-    """Pre-compute the sets needed for the per-item leakage probe (per 'Avoid Data Leakage')."""
-    if not pairs_path.exists():
-        return {"positive_targets": set(), "queries": set()}
-    pos = set()
-    qs = set()
-    for line in pairs_path.read_text().splitlines():
-        if not line.strip():
-            continue
-        try:
-            p = json.loads(line)
-        except json.JSONDecodeError:
-            continue
-        if p.get("positive", {}).get("lineage_id"):
-            pos.add(p["positive"]["lineage_id"])
-        if p.get("query"):
-            qs.add(p["query"])
-    return {"positive_targets": pos, "queries": qs}
-
-
 # -- public API ---------------------------------------------------------------
 
 def build_benchmark(chunks_dir: Optional[Path] = None,
-                    graph_dir: Optional[Path] = None,
-                    pairs_path: Optional[Path] = None
+                    graph_dir: Optional[Path] = None
                     ) -> List[BenchmarkItem]:
-    """Build the 60-item 8-family benchmark (deterministic).
-
-    Backward-compat with the old signature: the old callers passed
-    (chunks_dir, graph_dir, pairs_path) positionally, all optional.  We
-    keep the same signature so nothing has to change at the call-site.
-    """
-    import common as c  # for default pairs_path
-    if pairs_path is None:
-        pairs_path = c.NOTEBOOKS_DATA / "retrieval" / "pairs_stage1.jsonl"
-
+    """Build the 60-item 8-family benchmark (deterministic)."""
     gold = _build_gold(chunks_dir, graph_dir)
-    probes = leakage_probes(pairs_path, gold)
-    n_leak = 0
-    for it in gold:
-        it.leakage = _leakage(probes, it)
-        n_leak += int(it.leakage["target_is_training_positive"])
-    if gold:
-        gold[-1].metadata["n_targets_that_are_training_positives"] = n_leak
     return gold
 
 
@@ -1135,7 +1086,7 @@ def _item_from_dict(d: dict) -> "BenchmarkItem":
         reference_answer=d.get("reference_answer"),
         reference_basis=d.get("reference_basis", ""),
         difficulty=d.get("difficulty", "unknown"),
-        metadata=d.get("metadata", {}), leakage=d.get("leakage", {}),
+        metadata=d.get("metadata", {}),
         gold_documents=d.get("gold_documents", []),
         gold_chunks=d.get("gold_chunks", []),
         gold_entities=d.get("gold_entities", []),
@@ -1206,8 +1157,6 @@ def summary(items: Sequence[BenchmarkItem]) -> dict:
     from collections import Counter
     cats = Counter(i.category for i in items)
     docs = Counter(i.doc_id for i in items)
-    leak_pos = sum(1 for i in items if i.leakage.get("target_is_training_positive"))
-    leak_q = sum(1 for i in items if i.leakage.get("question_matches_training_query"))
     rel = Counter(i.intended_relation for i in items if i.intended_relation)
     return {
         "n": len(items),
@@ -1216,14 +1165,6 @@ def summary(items: Sequence[BenchmarkItem]) -> dict:
         "n_docs": len(docs),
         "docs": dict(sorted(docs.items(), key=lambda kv: -kv[1])[:12]),
         "hop_count_counts": dict(Counter(i.hop_count for i in items)),
-        "leakage": {
-            "targets_that_are_lora_training_positives": leak_pos,
-            "questions_that_match_training_queries": leak_q,
-            "note": ("data-leakage: the LoRA encoder was trained on "
-                     "positive pairs whose target is this gold set's target. "
-                     "Any dense-finetune row benefiting from this is a known "
-                     "inflation; the base-encoder rows are the clean baseline."),
-        },
     }
 
 

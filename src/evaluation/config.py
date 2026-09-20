@@ -9,10 +9,7 @@ across cells.  Changing a value here changes every run identically.
 
 NOTE on methodological neutrality (per the "Methodological Neutrality" requirement): the SAME k-set, benchmark and
 relevance judgments are applied to every system.  No per-system cutoffs are
-chased to flatter one configuration.  The one intentional asymmetry is the
-dense *model variant* (base vs LoRA stage1/stage2), which is exactly the
-ablation the "Fine-Tuning Evaluation" requirement asks to isolate, and it is held on an otherwise
-identical index.
+chased to flatter one configuration.
 """
 from __future__ import annotations
 
@@ -44,7 +41,6 @@ OUT_PER_QUERY = EVAL_RESULTS / "per_query"
 OUT_RETRIEVAL = EVAL_RESULTS / "retrieval"
 OUT_GENERATION = EVAL_RESULTS / "generation"
 OUT_GRAPHS = EVAL_RESULTS / "graph"
-OUT_ABLATION = EVAL_RESULTS / "ablations"
 OUT_FIGURES = ROOT / "notebooks" / "data" / "figures"
 OUT_REPORTS = EVAL_RESULTS / "reports"
 
@@ -187,7 +183,7 @@ GRAPH_RERANK_MODES: Tuple[str, ...] = (
 #:   graph     : whether the result is a graph-traversal system
 #:   reranking : "Not implemented" in this repo -> the row is present but
 #:               explicitly marked N/A (user decision), never a fabricated value
-#:   dense_model : "base" | "finetuned_stage1" | "finetuned_stage2" (ablation)
+#:   dense_model : "base" | None
 EXPERIMENTS: Dict[str, dict] = {
     # --- single-method baselines -----------------------------------------
     "dense":      {"retrieval": "dense",      "graph": False,
@@ -234,11 +230,6 @@ EXPERIMENTS: Dict[str, dict] = {
     "hybrid_gr_expand": {
         "retrieval": "hybrid_gr_expand", "graph": True,
         "reranking": "listwise_llm+graph_ctx+expand", "dense_model": "base"},
-    # --- fine-tuning ablation (per "Fine-Tuning Evaluation"): identical pipeline, 3 encoders --
-    "dense_ft_s1":  {"retrieval": "dense", "graph": False,
-                     "reranking": "not_implemented", "dense_model": "finetuned_stage1"},
-    "dense_ft_s2":  {"retrieval": "dense", "graph": False,
-                     "reranking": "not_implemented", "dense_model": "finetuned_stage2"},
 }
 
 #: Which experiments the *answer* (end-to-end RAG) evaluation runs.
@@ -248,7 +239,7 @@ EXPERIMENTS: Dict[str, dict] = {
 #: hybrid_graph_rerank`` plus the two graph-context ablations (``#9 1hop``,
 #: ``#10 relations``). The older ``sparse/dense/hybrid_graph/neo4j`` baseline
 #: rows (still reproducible from their per-query + generation rows) and the
-#: ``dense_ft_*`` fine-tune rows are retrieval-only in that document (Group A /
+#: retrieval-only rows are NOT answer-scored by default in that document (Group A /
 #: Tier 3-4) and are therefore NOT answer-scored by default -- they would add
 #: ~2.6x the judge compute without advancing the core hypothesis.
 GENERATION_SYSTEMS: Tuple[str, ...] = (

@@ -1,5 +1,0 @@
-configuration,retrieval,graph,ablation_metric,k,value,delta_vs_full
-full,hybrid,True,recall,10,0.267,0.00
-without_dense,dense,False,recall,10,0.200,-0.067
-without_sparse,sparse,False,recall,10,0.283,0.017
-without_graph,graph,True,recall,10,0.300,0.033

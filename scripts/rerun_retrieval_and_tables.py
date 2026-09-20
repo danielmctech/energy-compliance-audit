@@ -1,12 +1,12 @@
 """Re-run retrieval over the fresh 8-family benchmark for ALL EXPERIMENTS,
-then re-render every aggregate-dependent table (A, C, D, comparison) so
+then re-render every aggregate-dependent table (A, comparison) so
 real values -- never n/a -- are available. Table B is re-rendered from the
 already-fresh answer_aggregate.csv for internal consistency.
 
 Why:
   * The on-disk retrieval_*.jsonl + retrieval_aggregate.{csv,json} +
     table_*.csv + tables.md were produced before the 8-family benchmark
-    landed, so Tables C/D/Comparison show n/a (dense/sparse/hybrid rows
+    landed, so Table A / Comparison show n/a (dense/sparse/hybrid rows
     missing from the aggregate).
   * The answer/judge files were already refreshed (Sep 5) on the 8-family
     set and MUST NOT be re-judged -- Table B's source stays unchanged.
@@ -19,9 +19,9 @@ Plan:
      system skip (recorded in skipped_systems.json, never abort, never
      fabricate). The dense model loads once; the LLM re-rank cache serves
      repeated (query, pool) prompts.
-  4. re-render Table A + Tables C/D/Comparison from the fresh aggregate.
+  4. re-render Table A + Comparison from the fresh aggregate.
   5. re-render Table B from answer_aggregate.csv (unchanged source).
-  6. write table_{A,B,C,D,COMPARISON}.csv + tables.md (overwrite stale).
+  6. write table_{A,B,comparison}.csv + tables.md (overwrite stale).
 
 Usage:
     PYENV_VERSION=energy-audit \
@@ -93,15 +93,13 @@ def main() -> None:
 
     # ---- 5. render tables ---------------------------------------------------
     tA = TB.table_a(agg)
-    tC = TB.table_c(agg, ablation_metric="recall", ablation_k=10)
-    tD = TB.table_d(agg, k=10)
     tComp = TB.comparison(agg, k=10)
     ans_agg = TB.load_answer_aggregate()
     tB = TB.table_b(ans_agg)
-    line(f"[table] A={len(tA)}  B={len(tB)}  C={len(tC)}  D={len(tD)}  comparison={len(tComp)}")
+    line(f"[table] A={len(tA)}  B={len(tB)}  comparison={len(tComp)}")
 
     # ---- 6. write CSVs + tables.md ------------------------------------------
-    written = TB.write({"A": tA, "B": tB, "C": tC, "D": tD, "comparison": tComp})
+    written = TB.write({"A": tA, "B": tB, "comparison": tComp})
     for name, p in written.items():
         line(f"[write] table {name} -> {p}")
     line(f"[write] markdown -> {E.OUT_AGGREGATE / 'tables.md'}")

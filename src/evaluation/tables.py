@@ -5,8 +5,6 @@ renders:
   Table A -- Retrieval performance (per system, per K: recall/precision/
              hit/MRR/nDCG).
   Table B -- RAG answer quality (per system: EM/F1/sim/cites + judge axes).
-  Table C -- Ablation (component on/off against the full system).
-  Table D -- Fine-tuning a/b (dense base vs stage1 vs stage2).
 
 All numeric values are the *actually computed* ones from the run -- never
 placeholders ("No Fabricated Results").  A system row that could not be executed is shown
@@ -123,46 +121,6 @@ def table_b(ans_agg: List[dict], systems: Optional[Sequence[str]] = None
             row[col] = _fmt(vals[m].get(s), nd)
         rows.append(row)
     return rows
-
-
-def table_c(agg: List[dict], ablation_metric: str = "recall",
-            ablation_k: int = 10) -> List[dict]:
-    """Table C: ablation (full vs without-dense/sparse/graph) at one K."""
-    full = next((r["value"] for r in agg
-                 if r["system"] == "hybrid" and r["metric"] == ablation_metric
-                 and r["k"] == ablation_k), None)
-    rows = []
-    for cfg_name in ("dense", "sparse", "graph"):
-        v = next((r["value"] for r in agg
-                  if r["system"] == cfg_name and r["metric"] == ablation_metric
-                  and r["k"] == ablation_k), None)
-        rows.append({
-            "configuration": f"without_{cfg_name}",
-            "retrieval": cfg_name,
-            "graph": cfg_name == "graph",
-            "ablation_metric": ablation_metric,
-            "k": ablation_k,
-            "value": _fmt(v),
-            "delta_vs_full": _fmt((v - full) if (v is not None and full is not None)
-                                 else None),
-        })
-    rows.insert(0, {"configuration": "full", "retrieval": "hybrid",
-                    "graph": True, "ablation_metric": ablation_metric,
-                    "k": ablation_k, "value": _fmt(full),
-                    "delta_vs_full": "0.00"})
-    return rows
-
-
-def table_d(agg: List[dict], k: int = 10,
-            ) -> List[dict]:
-    """Table D: fine-tuning a/b (dense base vs stage1 vs stage2)."""
-    out = []
-    for s in ("dense", "dense_ft_s1", "dense_ft_s2"):
-        v = next((r["value"] for r in agg
-                  if r["system"] == s and r["metric"] == "recall"
-                  and r["k"] == k), None)
-        out.append({"variant": s, "k": k, "recall": _fmt(v)})
-    return out
 
 
 def comparison(agg: List[dict], k: int = 10,
